@@ -1,0 +1,16 @@
+{
+    "name": "zenvy-delivery-app-root",
+    "version": "1.0.0",
+    "description": "Root package.json to manage monorepo-like structure",
+    "scripts": {
+        "start": "cd mobile && npx expo start",
+        "dev": "cd mobile && npx expo start",
+        "android": "cd mobile && npx expo start --android",
+        "ios": "cd mobile && npx expo start --ios",
+        "web": "cd mobile && npx expo start --web",
+        "install:mobile": "cd mobile && npm install",
+        "install:backend": "cd backend && npm install"
+    },
+    "author": "",
+    "license": "ISC"
+}

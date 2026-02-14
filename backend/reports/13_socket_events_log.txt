@@ -1,0 +1,5 @@
+[2026-02-06T10:51:23.864Z] Listening for Socket.IO events...
+[2026-02-06T10:51:23.866Z] Perform order operations to trigger events.
+[2026-02-06T10:51:23.867Z] Press Ctrl+C to exit and see summary
+
+[2026-02-06T10:51:23.892Z] ✗ Connection error: Authentication error

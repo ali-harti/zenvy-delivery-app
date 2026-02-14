@@ -1,0 +1,23 @@
+
+> zenyy-backend@1.0.0 migrate
+> node migrations/run.js
+
+🚀 Starting database migrations...
+
+📍 Connection string: postgresql://postgres:****@Ali..@localhost:5432/zenyy_db
+🔌 Testing connection...
+✓ Database connected successfully
+✓ Connected to: PostgreSQL 18.1
+
+📋 Running schema migration...
+✓ Schema migration completed successfully
+
+🌱 Inserting seed data...
+✓ Seed data inserted successfully
+
+🔍 Verifying data...
+✓ Users: 7
+✓ Stores: 10
+✓ Products: 33
+
+✅ All migrations completed successfully!

@@ -1,0 +1,37 @@
+
+> zenyy-backend@1.0.0 migrate
+> node migrations/run.js
+
+🚀 Starting database migrations...
+
+📍 Connection string: postgresql://postgres:****@localhost:5432/zenyy_db
+🔌 Testing connection...
+
+✗ Migration failed: password authentication failed for user "postgres"
+
+Full error:
+error: password authentication failed for user "postgres"
+    at C:\Users\dell\OneDrive\Documents\Zenvy Delivery App\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async runMigrations (C:\Users\dell\OneDrive\Documents\Zenvy Delivery App\backend\migrations\run.js:12:28) {
+  length: 104,
+  severity: 'FATAL',
+  code: '28P01',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'auth.c',
+  line: '320',
+  routine: 'auth_failed'
+}
+
+Connection details:
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/zenyy_db
