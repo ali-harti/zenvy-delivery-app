@@ -39,3 +39,12 @@ ios/
 .idea/
 *.swp
 *.swo
+
+# Media & Demo Recordings (Do Not Commit)
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.avi
+*.wmv
+*.flv
