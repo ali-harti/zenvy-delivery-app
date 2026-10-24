@@ -1,4 +1,4 @@
-# 🍔 Zenvy — Full-Stack On-Demand Food Delivery Platform
+# Zenvy — Full-Stack On-Demand Food Delivery Platform
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933.svg?logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-4.18-000000.svg?logo=express)](https://expressjs.com/)
@@ -15,7 +15,7 @@ Zenvy is a multi-role, real-time food and local commerce delivery platform desig
 
 ---
 
-## 📱 Mobile Application Screenshots
+## Mobile Application Screenshots
 
 Demo video: *[Link to add later]*
 
@@ -34,65 +34,65 @@ High-resolution 1200×627 presentation composites suitable for professional port
 
 ---
 
-## 🚀 Key Features by Actor
+## Key Features by Actor
 
-### 🛍️ Customer Experience
+### Customer Experience
 - **Store & Product Discovery**: Category filtering (Restaurants, Groceries, Pharmacy, Flowers), store search, ratings, and estimated delivery windows.
 - **Product Configuration**: Quantity modifiers, special cooking instructions, and dynamic subtotal calculations.
 - **Cart Management**: Server-synchronized cart storage with user isolation and quantity validation against real-time inventory.
 - **Checkout & Address Selection**: Support for multiple delivery addresses, delivery scheduling options, cash-on-delivery (COD), and mock payment reference processing.
 - **Live Order Tracking**: Stage-by-stage status indicator (Placed → Accepted → Preparing → Picked Up → On the Way → Delivered) with courier details and direct hotline/support contacts.
 
-### 🛵 Courier Experience
+### Courier Experience
 - **Shift & Readiness Onboarding**: System permissions verification (Location Services, Push Notifications), vehicle category selection (Bike, Scooter, Car), and operating zone confirmation (e.g., Casablanca Maarif).
 - **Dispatch Queue**: Real-time incoming delivery requests with payout amounts (MAD), pickup store details, dropoff locations, and instant Accept/Decline action handlers.
 - **Concurrency-Safe Assignment**: Optimistic accept handlers backed by pessimistic database row locks (`SELECT ... FOR UPDATE`) preventing multiple couriers from claiming the same order.
 - **Turn-by-Turn Delivery Workflow**: Enforced state transitions (`Arrived at Store` → `Start Delivery` → `Confirm Delivery`).
 - **Earnings & Analytics**: Daily, weekly, and monthly payout summaries, cash collected reconciliation, and historical delivery logs.
 
-### 🍳 Merchant Experience
+### Merchant Experience
 - **Kitchen Display System (KDS)**: Real-time incoming order stream with itemized lists, special customer instructions, and current fulfillment status.
 - **State Machine Actions**: Progress order state from `PENDING` to `PREPARING` and `READY` for courier pickup.
 - **Store Operations**: Live toggle to switch store status between `Open` and `Closed`.
 - **Menu & Stock Management**: Real-time product availability toggle (`Active` vs. `Hidden`/Sold Out).
 
-### ⚡ Real-Time Tracking & Event Bus
+### Real-Time Tracking & Event Bus
 - **Socket.io WebSocket Layer**: Bi-directional event communication for instantaneous order state changes without HTTP polling.
 - **Room Isolation**: Automatic segregation into user-specific (`user_<id>`), courier-specific (`courier_<id>`), and merchant-specific (`merchant_<id>`) channels.
 - **Post-Commit Event Dispatching**: WebSocket events are triggered only via `transaction.afterCommit()` to prevent ghost notifications from uncommitted or aborted database transactions.
 
 ---
 
-## 🏛️ System Architecture & Trust Boundaries
+## ️ System Architecture & Trust Boundaries
 
 The system is partitioned into explicit trust boundaries separating untrusted client runtimes, authenticated edge proxies, business execution services, and persistence layers.
 
 ```mermaid
 flowchart TB
     subgraph Client_Trust_Boundary["Client Boundary (Untrusted Device Environment)"]
-        CustomerApp["📱 Customer Mobile App (Expo)"]
-        CourierApp["🛵 Courier Mobile App (Expo)"]
-        MerchantApp["🏪 Merchant Mobile App (Expo)"]
+        CustomerApp[" Customer Mobile App (Expo)"]
+        CourierApp[" Courier Mobile App (Expo)"]
+        MerchantApp[" Merchant Mobile App (Expo)"]
     end
 
     subgraph Edge_Boundary["Edge & Network Boundary"]
-        ReverseProxy["🛡️ Reverse Proxy / Load Balancer\n(Nginx / Cloudflare - TRUST_PROXY_HOPS)"]
-        CORS["🌐 CORS Validation\n(Explicit Origin Whitelist)"]
-        RateLimit["⏱️ Rate Limiting\n(IP / User-ID Namespace)"]
+        ReverseProxy["️ Reverse Proxy / Load Balancer\n(Nginx / Cloudflare - TRUST_PROXY_HOPS)"]
+        CORS[" CORS Validation\n(Explicit Origin Whitelist)"]
+        RateLimit["️ Rate Limiting\n(IP / User-ID Namespace)"]
     end
 
     subgraph App_Server_Boundary["Application Server Boundary (Node.js / Express)"]
-        AuthMiddleware["🔑 JWT Verification & Role Auth\n(src/middleware/auth.js)"]
-        Router["🔀 REST Routing\n(/api/v1/*)"]
-        StateMachine["⚙️ Order State Machine\n(src/services/stateMachine.js)"]
-        OrderService["📦 Order & Stock Service\n(src/services/OrderService.js)"]
-        DeliveryService["🚚 Delivery Dispatch Service\n(src/services/DeliveryService.js)"]
-        SocketServer["🔌 Socket.io Gateway\n(src/socket/index.js)"]
+        AuthMiddleware[" JWT Verification & Role Auth\n(src/middleware/auth.js)"]
+        Router[" REST Routing\n(/api/v1/*)"]
+        StateMachine["️ Order State Machine\n(src/services/stateMachine.js)"]
+        OrderService[" Order & Stock Service\n(src/services/OrderService.js)"]
+        DeliveryService[" Delivery Dispatch Service\n(src/services/DeliveryService.js)"]
+        SocketServer[" Socket.io Gateway\n(src/socket/index.js)"]
     end
 
     subgraph Data_Boundary["Persistence & Isolation Boundary"]
-        PessimisticLock["🔒 Row-Level Locks\n(SELECT ... FOR UPDATE)"]
-        PostgresDB[("🐘 PostgreSQL Relational DB\n(Sequelize ORM - ACID Transactions)")]
+        PessimisticLock[" Row-Level Locks\n(SELECT ... FOR UPDATE)"]
+        PostgresDB[(" PostgreSQL Relational DB\n(Sequelize ORM - ACID Transactions)")]
     end
 
     %% Data flows
@@ -129,19 +129,19 @@ flowchart TB
 
 ---
 
-## 🔒 Security Architecture & Technical Controls
+##  Security Architecture & Technical Controls
 
 ### A. Threat Model (STRIDE)
 
 | Threat Category | Asset / Target | Potential Attack Vector | Zenvy Mitigation & Verification | Code Location | Status |
 | :--- | :--- | :--- | :--- | :--- | :---: |
-| **Spoofing** | User Identity / Auth | Forged tokens, credential stuffing, brute-forcing passwords. | Signed HMAC-SHA256 JWT tokens; bcrypt password hashing (10 rounds); account `isActive` validation on every authenticated request. | [backend/src/middleware/auth.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L8-L39)<br>[backend/src/models/User.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/models/User.js#L98-L100) | ✅ Implemented |
-| **Tampering** | Order Price / Stock | Modifying item pricing in transit; checkout race conditions. | Client price inputs are discarded; server recalculates subtotal from database price snapshots inside locked transactions. | [backend/src/services/OrderService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L197-L245) | ✅ Implemented |
-| **Repudiation** | Order Status & Delivery | Disputing who marked an order delivered or cancelled. | Dedicated `AuditLog` records and state machine actor validation recording actor ID, role, and prior state. | [backend/src/services/AuditService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/AuditService.js)<br>[backend/src/services/stateMachine.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/stateMachine.js#L73-L115) | ✅ Implemented |
-| **Information Disclosure** | PII / Order Data | IDOR attacks accessing other customers' orders or cart items. | Per-object ownership checks verifying `order.userId === req.user.id`, store ownership, or courier assignment. Cart items scoped via inner join on `userId`. | [backend/src/services/OrderService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L400-L450)<br>[backend/src/controllers/CartController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/CartController.js#L143-L156) | ✅ Implemented |
-| **Information Disclosure** | Live Courier Telemetry | Eavesdropping on courier real-time GPS locations. | Socket handshake authentication via JWT. However, order room join authorization is unverified. | [backend/src/socket/index.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/socket/index.js#L10-L31) | 🟡 Partial |
-| **Denial of Service** | Express API Endpoints | Request flooding, auth brute force, rapid checkout spam. | Global IP/User rate limiter configured (100 req/15 min). Auth-specific and order-specific limiters implemented in middleware but not mounted to routes. | [backend/src/app.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/app.js#L67)<br>[backend/src/middleware/rateLimiter.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/rateLimiter.js#L15-L98) | 🟡 Partial |
-| **Elevation of Privilege** | Account Roles | Submitting unauthorized role parameter during registration. | RBAC middleware checks `req.user.role`. However, `AuthController.register` accepts `req.body.role` directly without restriction. | [backend/src/middleware/auth.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L44-L56)<br>[backend/src/controllers/AuthController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/AuthController.js#L31) | 🟡 Partial |
+| **Spoofing** | User Identity / Auth | Forged tokens, credential stuffing, brute-forcing passwords. | Signed HMAC-SHA256 JWT tokens; bcrypt password hashing (10 rounds); account `isActive` validation on every authenticated request. | [backend/src/middleware/auth.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L8-L39)<br>[backend/src/models/User.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/models/User.js#L98-L100) | [Implemented] |
+| **Tampering** | Order Price / Stock | Modifying item pricing in transit; checkout race conditions. | Client price inputs are discarded; server recalculates subtotal from database price snapshots inside locked transactions. | [backend/src/services/OrderService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L197-L245) | [Implemented] |
+| **Repudiation** | Order Status & Delivery | Disputing who marked an order delivered or cancelled. | Dedicated `AuditLog` records and state machine actor validation recording actor ID, role, and prior state. | [backend/src/services/AuditService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/AuditService.js)<br>[backend/src/services/stateMachine.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/stateMachine.js#L73-L115) | [Implemented] |
+| **Information Disclosure** | PII / Order Data | IDOR attacks accessing other customers' orders or cart items. | Per-object ownership checks verifying `order.userId === req.user.id`, store ownership, or courier assignment. Cart items scoped via inner join on `userId`. | [backend/src/services/OrderService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L400-L450)<br>[backend/src/controllers/CartController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/CartController.js#L143-L156) | [Implemented] |
+| **Information Disclosure** | Live Courier Telemetry | Eavesdropping on courier real-time GPS locations. | Socket handshake authentication via JWT. However, order room join authorization is unverified. | [backend/src/socket/index.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/socket/index.js#L10-L31) | [Partial] |
+| **Denial of Service** | Express API Endpoints | Request flooding, auth brute force, rapid checkout spam. | Global IP/User rate limiter configured (100 req/15 min). Auth-specific and order-specific limiters implemented in middleware but not mounted to routes. | [backend/src/app.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/app.js#L67)<br>[backend/src/middleware/rateLimiter.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/rateLimiter.js#L15-L98) | [Partial] |
+| **Elevation of Privilege** | Account Roles | Submitting unauthorized role parameter during registration. | RBAC middleware checks `req.user.role`. However, `AuthController.register` accepts `req.body.role` directly without restriction. | [backend/src/middleware/auth.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L44-L56)<br>[backend/src/controllers/AuthController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/AuthController.js#L31) | [Partial] |
 
 ---
 
@@ -164,16 +164,16 @@ Access control is enforced using two layers:
 
 | Resource / Endpoint | HTTP Method | Customer | Courier | Merchant | Admin | Enforcement Mechanism & File Path |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| `/api/v1/stores` | `GET` | ✅ Read | ✅ Read | ✅ Read | ✅ Read | Public route ([src/routes/store.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/store.routes.js#L6-L8)) |
-| `/api/v1/cart/**` | `GET`, `POST`, `PATCH`, `DELETE` | ✅ Own cart | ❌ | ❌ | ❌ | `authenticate` + `where: { userId }` ([src/controllers/CartController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/CartController.js#L19-L200)) |
-| `/api/v1/orders` | `POST` | ✅ Create | ❌ | ❌ | ❌ | `authenticate` + stock check ([src/routes/order.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/order.routes.js#L8)) |
-| `/api/v1/orders/:id` | `GET` | ✅ Own order | ✅ Assigned | ✅ Own store | ✅ All | Object-level IDOR check ([src/services/OrderService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L427-L448)) |
-| `/api/v1/orders/:id/cancel` | `PATCH` | ✅ If PENDING | ❌ | ✅ If not IN_DELIVERY | ✅ Any | State machine role matrix ([src/services/stateMachine.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/stateMachine.js#L32-L70)) |
-| `/api/v1/orders/:id/status` | `PATCH` | ❌ | ❌ | ✅ Own store | ✅ Any | `authorize('admin', 'merchant')` + state machine validation |
-| `/api/v1/delivery/available` | `GET` | ❌ | ✅ Read queue | ❌ | ✅ Read | `authorize('courier', 'admin')` ([src/routes/delivery.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/delivery.routes.js#L8-L10)) |
-| `/api/v1/delivery/orders/:id/accept` | `POST` | ❌ | ✅ Claim | ❌ | ✅ Assign | `authorize('courier', 'admin')` + row lock ([src/services/DeliveryService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/DeliveryService.js)) |
-| `/api/v1/merchant/store` | `POST`, `PATCH` | ❌ | ❌ | ✅ Own store | ✅ All | `authorize('merchant')` ([src/routes/merchant.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/merchant.routes.js#L23-L26)) |
-| `/api/v1/admin/**` | `GET`, `PATCH` | ❌ | ❌ | ❌ | ✅ All | `authorize('admin')` ([src/routes/admin.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/admin.routes.js#L7-L18)) |
+| `/api/v1/stores` | `GET` | Allowed (Read) | Allowed (Read) | Allowed (Read) | Allowed (Read) | Public route ([src/routes/store.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/store.routes.js#L6-L8)) |
+| `/api/v1/cart/**` | `GET`, `POST`, `PATCH`, `DELETE` | Allowed (Own cart) | Denied | Denied | Denied | `authenticate` + `where: { userId }` ([src/controllers/CartController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/CartController.js#L19-L200)) |
+| `/api/v1/orders` | `POST` | Allowed (Create) | Denied | Denied | Denied | `authenticate` + stock check ([src/routes/order.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/order.routes.js#L8)) |
+| `/api/v1/orders/:id` | `GET` | Allowed (Own order) | Allowed (Assigned) | Allowed (Own store) | Allowed (All) | Object-level IDOR check ([src/services/OrderService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L427-L448)) |
+| `/api/v1/orders/:id/cancel` | `PATCH` | Allowed (If PENDING) | Denied | Allowed (If not IN_DELIVERY) | Allowed (Any) | State machine role matrix ([src/services/stateMachine.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/stateMachine.js#L32-L70)) |
+| `/api/v1/orders/:id/status` | `PATCH` | Denied | Denied | Allowed (Own store) | Allowed (Any) | `authorize('admin', 'merchant')` + state machine validation |
+| `/api/v1/delivery/available` | `GET` | Denied | Allowed (Read queue) | Denied | Allowed (Read) | `authorize('courier', 'admin')` ([src/routes/delivery.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/delivery.routes.js#L8-L10)) |
+| `/api/v1/delivery/orders/:id/accept` | `POST` | Denied | Allowed (Claim) | Denied | Allowed (Assign) | `authorize('courier', 'admin')` + row lock ([src/services/DeliveryService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/DeliveryService.js)) |
+| `/api/v1/merchant/store` | `POST`, `PATCH` | Denied | Denied | Allowed (Own store) | Allowed (All) | `authorize('merchant')` ([src/routes/merchant.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/merchant.routes.js#L23-L26)) |
+| `/api/v1/admin/**` | `GET`, `PATCH` | Denied | Denied | Denied | Allowed (All) | `authorize('admin')` ([src/routes/admin.routes.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/routes/admin.routes.js#L7-L18)) |
 
 ---
 
@@ -183,16 +183,16 @@ Access control is enforced using two layers:
 
 | OWASP Top 10 Risk Category | How Zenvy Addresses It | Status | Verification Reference |
 | :--- | :--- | :---: | :--- |
-| **A01:2021 — Broken Access Control** | Route middleware checks role claims; services enforce strict object ownership checks verifying tenant separation on orders, carts, and merchant catalogs. | ✅ Implemented | [backend/src/services/OrderService.js#L427-L448](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L427-L448)<br>[backend/src/middleware/auth.js#L44-L56](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L44-L56) |
-| **A02:2021 — Cryptographic Failures** | Passwords hashed using bcrypt; JWT tokens signed with HMAC-SHA256 secret. No plaintext sensitive payment details stored. | ✅ Implemented | [backend/src/models/User.js#L98](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/models/User.js#L98)<br>[backend/src/utils/jwt.js#L7-L31](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/utils/jwt.js#L7-L31) |
-| **A03:2021 — Injection** | All database queries utilize Sequelize ORM with parameterized SQL queries, eliminating raw SQL concatenation vulnerabilities. | ✅ Implemented | [backend/src/models/index.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/models/index.js)<br>[backend/src/controllers/CartController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/CartController.js) |
-| **A04:2021 — Insecure Design** | Enforces a formal state machine with deterministic transitions for the entire order lifecycle; pessimistic locking for stock and courier assignment race conditions. | ✅ Implemented | [backend/src/services/stateMachine.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/stateMachine.js#L32-L70)<br>[backend/src/services/OrderService.js#L60-L75](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L60-L75) |
-| **A05:2021 — Security Misconfiguration** | Helmet security headers enabled; Express CORS whitelist enforced; global error handler sanitizes stack traces in non-dev environments. | 🟡 Partial | [backend/src/app.js#L24-L46](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/app.js#L24-L46)<br>*(Socket.io retains wildcard CORS `origin: '*'` in `src/server.js`)* |
-| **A06:2021 — Vulnerable & Outdated Components** | Core runtime dependencies (`express`, `helmet`, `jsonwebtoken`, `sequelize`, `socket.io`) are pinned to modern releases. | ✅ Implemented | [backend/package.json](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/package.json#L15-L33) |
-| **A07:2021 — Identification & Authentication Failures** | Strict credential verification and account activation checks. However, lack of refresh token rotation and session revocation allows persistent tokens until expiry. | 🟡 Partial | [backend/src/middleware/auth.js#L8-L38](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L8-L38) |
-| **A08:2021 — Software & Data Integrity Failures** | Price and total calculations executed exclusively on the server; client payloads cannot alter pricing or store associations. | ✅ Implemented | [backend/src/services/OrderService.js#L236-L258](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L236-L258) |
-| **A09:2021 — Security Logging & Monitoring Failures** | Centralized `AuditLog` model tracks significant domain events (`order_created`, status shifts); Winston logger tracks exceptions with `requestId`. | 🟡 Partial | [backend/src/services/AuditService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/AuditService.js)<br>[backend/src/utils/logger.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/utils/logger.js) |
-| **A10:2021 — Server-Side Request Forgery (SSRF)** | No user-supplied URLs or webhooks are fetched by the backend service. | ✅ Implemented | Verified across all route handlers in `backend/src/routes/` |
+| **A01:2021 — Broken Access Control** | Route middleware checks role claims; services enforce strict object ownership checks verifying tenant separation on orders, carts, and merchant catalogs. | [Implemented] | [backend/src/services/OrderService.js#L427-L448](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L427-L448)<br>[backend/src/middleware/auth.js#L44-L56](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L44-L56) |
+| **A02:2021 — Cryptographic Failures** | Passwords hashed using bcrypt; JWT tokens signed with HMAC-SHA256 secret. No plaintext sensitive payment details stored. | [Implemented] | [backend/src/models/User.js#L98](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/models/User.js#L98)<br>[backend/src/utils/jwt.js#L7-L31](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/utils/jwt.js#L7-L31) |
+| **A03:2021 — Injection** | All database queries utilize Sequelize ORM with parameterized SQL queries, eliminating raw SQL concatenation vulnerabilities. | [Implemented] | [backend/src/models/index.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/models/index.js)<br>[backend/src/controllers/CartController.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/controllers/CartController.js) |
+| **A04:2021 — Insecure Design** | Enforces a formal state machine with deterministic transitions for the entire order lifecycle; pessimistic locking for stock and courier assignment race conditions. | [Implemented] | [backend/src/services/stateMachine.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/stateMachine.js#L32-L70)<br>[backend/src/services/OrderService.js#L60-L75](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L60-L75) |
+| **A05:2021 — Security Misconfiguration** | Helmet security headers enabled; Express CORS whitelist enforced; global error handler sanitizes stack traces in non-dev environments. | [Partial] | [backend/src/app.js#L24-L46](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/app.js#L24-L46)<br>*(Socket.io retains wildcard CORS `origin: '*'` in `src/server.js`)* |
+| **A06:2021 — Vulnerable & Outdated Components** | Core runtime dependencies (`express`, `helmet`, `jsonwebtoken`, `sequelize`, `socket.io`) are pinned to modern releases. | [Implemented] | [backend/package.json](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/package.json#L15-L33) |
+| **A07:2021 — Identification & Authentication Failures** | Strict credential verification and account activation checks. However, lack of refresh token rotation and session revocation allows persistent tokens until expiry. | [Partial] | [backend/src/middleware/auth.js#L8-L38](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/middleware/auth.js#L8-L38) |
+| **A08:2021 — Software & Data Integrity Failures** | Price and total calculations executed exclusively on the server; client payloads cannot alter pricing or store associations. | [Implemented] | [backend/src/services/OrderService.js#L236-L258](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/OrderService.js#L236-L258) |
+| **A09:2021 — Security Logging & Monitoring Failures** | Centralized `AuditLog` model tracks significant domain events (`order_created`, status shifts); Winston logger tracks exceptions with `requestId`. | [Partial] | [backend/src/services/AuditService.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/services/AuditService.js)<br>[backend/src/utils/logger.js](file:///C:/Users/dell/OneDrive/Documents/zenvy-delivery-app/backend/src/utils/logger.js) |
+| **A10:2021 — Server-Side Request Forgery (SSRF)** | No user-supplied URLs or webhooks are fetched by the backend service. | [Implemented] | Verified across all route handlers in `backend/src/routes/` |
 
 ---
 
@@ -228,14 +228,14 @@ Access control is enforced using two layers:
 
 ### H. Prioritized Hardening Roadmap
 
-- [ ] 🔲 **P1: Restrict Registration Role Assignment**: Hardcode default role to `customer` in `AuthController.register`; merchant and courier roles must require administrative approval or separate onboarding endpoints.
-- [ ] 🔲 **P1: Authorize Socket.io Room Subscriptions**: Validate that `socket.user.id` matches `order.userId`, `order.deliveryPersonId`, or store owner before allowing `socket.join('order_' + orderId)`.
-- [ ] 🔲 **P1: Validate Courier Telemetry Emitter**: Verify sender is the assigned courier for `orderId` before broadcasting in `update_location`.
-- [ ] 🔲 **P2: Mount Specialized Rate Limiters**: Mount `authLimiter` to `/api/v1/auth/login` and `/register`, and `orderLimiter` to `POST /api/v1/orders`.
-- [ ] 🔲 **P2: Migrate Mobile Storage to SecureStore**: Replace `@react-native-async-storage/async-storage` with `expo-secure-store` to encrypt JWTs in iOS Keychain / Android Keystore.
-- [ ] 🔲 **P2: Socket.io CORS Hardening**: Replace `origin: '*'` in `src/server.js` with the explicit origin whitelist defined in `config.cors.origin`.
-- [ ] 🔲 **P3: Token Revocation & Refresh Rotation**: Implement Redis-backed token denylisting for logout and separate short-lived access tokens (15m) with rotating refresh tokens (7d).
-- [ ] 🔲 **P3: Telemetry Precision Fuzzing**: Truncate courier GPS coordinates to 3 decimal places (~110m accuracy) when broadcasting to customers until courier is within 500m of the delivery location.
+- [ ] **P1: Restrict Registration Role Assignment**: Hardcode default role to `customer` in `AuthController.register`; merchant and courier roles must require administrative approval or separate onboarding endpoints.
+- [ ] **P1: Authorize Socket.io Room Subscriptions**: Validate that `socket.user.id` matches `order.userId`, `order.deliveryPersonId`, or store owner before allowing `socket.join('order_' + orderId)`.
+- [ ] **P1: Validate Courier Telemetry Emitter**: Verify sender is the assigned courier for `orderId` before broadcasting in `update_location`.
+- [ ] **P2: Mount Specialized Rate Limiters**: Mount `authLimiter` to `/api/v1/auth/login` and `/register`, and `orderLimiter` to `POST /api/v1/orders`.
+- [ ] **P2: Migrate Mobile Storage to SecureStore**: Replace `@react-native-async-storage/async-storage` with `expo-secure-store` to encrypt JWTs in iOS Keychain / Android Keystore.
+- [ ] **P2: Socket.io CORS Hardening**: Replace `origin: '*'` in `src/server.js` with the explicit origin whitelist defined in `config.cors.origin`.
+- [ ] **P3: Token Revocation & Refresh Rotation**: Implement Redis-backed token denylisting for logout and separate short-lived access tokens (15m) with rotating refresh tokens (7d).
+- [ ] **P3: Telemetry Precision Fuzzing**: Truncate courier GPS coordinates to 3 decimal places (~110m accuracy) when broadcasting to customers until courier is within 500m of the delivery location.
 
 ---
 
@@ -251,7 +251,7 @@ Access control is enforced using two layers:
 
 ---
 
-## 🚀 Quick Start & Local Execution
+## Quick Start & Local Execution
 
 Follow these steps to run the complete Zenvy platform locally.
 
@@ -315,7 +315,7 @@ npm test
 
 ---
 
-## ⚙️ Environment Variables Reference
+## Environment Variables Reference
 
 | Variable Name | Component | Purpose | Recommended Placeholder |
 | :--- | :--- | :--- | :--- |
@@ -342,7 +342,7 @@ npm test
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Domain | Technology | Version | Purpose & Description |
 | :--- | :--- | :--- | :--- |
@@ -359,7 +359,7 @@ npm test
 
 ---
 
-## 📁 Project Directory Structure
+## Project Directory Structure
 
 ```text
 zenvy-delivery-app/
@@ -423,9 +423,9 @@ zenvy-delivery-app/
 
 ---
 
-## 📄 License & Attribution
+## License & Attribution
 
 This project is open-source software licensed under the **[MIT License](LICENSE)**.
 
-**Developed by Ali Harti** — *Senior Creative Technologist & Full-Stack Security Engineer*
+**Developed by Ali Harti** — *Software Engineer*
 - GitHub: [@ali-harti](https://github.com/ali-harti)
